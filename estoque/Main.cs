@@ -16,6 +16,32 @@ namespace estoque
     {
 
         public Repo repo = new Repo();
+
+        private void AtualizarProds()
+        {
+            ProdList.Items.Clear(); 
+            foreach (Produto produto in repo.produtos)
+            {
+                ProdList.Items.Add($"{produto.id} - {produto.name}");
+            }
+        }
+        public void AtualizarEntradaSaida(int id)
+        {
+            List<Movimentacao> movs = repo.ListarMovimentacoes(id);
+            EntradaList.Items.Clear();
+            SaidaList.Items.Clear();
+            foreach (Movimentacao mov in movs)
+            {
+                if (mov.tipo == "Entrada")
+                {
+                    EntradaList.Items.Add($"{mov.quant} --{mov.data.ToString("dd/MM/yyyy")}");
+                }
+                else if (mov.tipo == "Saída")
+                {
+                    SaidaList.Items.Add($"{mov.quant} -- {mov.data}");
+                }
+            }
+        }
         public Main()
         {
 
@@ -33,41 +59,18 @@ namespace estoque
 
             InitializeComponent();
 
-            foreach( Produto produto in repo.produtos)
-            {
-                ProdList.Items.Add($"{produto.id} - {produto.name}");
-            }
+            AtualizarProds();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ProdList_SelectedIndexChanged(object sender, EventArgs e)
         {
             Prodtitle.Text = ProdList.SelectedItem.ToString();
-            string prodId = Prodtitle.Text.Split('-')[0];
-            int id = Convert.ToInt32(prodId);
-
-            List<Movimentacao> movs = repo.ListarMovimentacoes(id);
+            int id = Convert.ToInt32(Prodtitle.Text.Split('-')[0]);
 
             int estoque = repo.EmEstoque(id);
             Estoque.Text = $"ESTOQUE: {estoque}";
 
-            EntradaList.Items.Clear();
-            SaidaList.Items.Clear();
-            foreach (Movimentacao mov in movs)
-            {
-                if (mov.tipo == "Entrada")
-                {
-                    EntradaList.Items.Add($"{mov.quant} -- {mov.data.ToString("dd/MM/yyyy")}");
-                }
-                else if (mov.tipo == "Saída")
-                {
-                    SaidaList.Items.Add($"{mov.quant} -- {mov.data}");
-                }
-            }
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
+            AtualizarEntradaSaida(id);
         }
 
         private void AdicionarProduto_Click(object sender, EventArgs e)
@@ -80,20 +83,9 @@ namespace estoque
             else
             {
                 repo.AddProduto(name);
-
-                ProdList.Items.Clear();
-                foreach (Produto produto in repo.produtos)
-                {
-                    ProdList.Items.Add($"{produto.id} - {produto.name}");
-                }
-                ProdNameInput.Text = "";
+                AtualizarProds();
             }
             
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void Confirmar_Click(object sender, EventArgs e)
@@ -112,18 +104,14 @@ namespace estoque
                 MessageBox.Show("Coloque um valor na quantidade");
             }else
             {
-                string prodId = Prodtitle.Text.Split('-')[0];
-                int id = Convert.ToInt32(prodId);
-                Console.WriteLine(CheckBox.Text);
 
+                int id = Convert.ToInt32(Prodtitle.Text.Split('-')[0]);
                 string tipo = CheckBox.Text;
                 int quant = Convert.ToInt32(QuantInput.Text);
 
-
                 repo.AddMovimentacao(id, tipo, quant);
+                AtualizarEntradaSaida(id);
             }
-
-            
         }
 
         private void CheckBox_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -138,11 +126,6 @@ namespace estoque
                     listBox.SetItemChecked(i, false);
                 }
             }
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

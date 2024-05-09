@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.ProdList = new System.Windows.Forms.ListBox();
             this.SaidaList = new System.Windows.Forms.ListBox();
             this.EntradaList = new System.Windows.Forms.ListBox();
@@ -55,7 +56,7 @@
             this.ProdList.Name = "ProdList";
             this.ProdList.Size = new System.Drawing.Size(251, 303);
             this.ProdList.TabIndex = 0;
-            this.ProdList.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.ProdList.SelectedIndexChanged += new System.EventHandler(this.ProdList_SelectedIndexChanged);
             // 
             // SaidaList
             // 
@@ -119,7 +120,6 @@
             this.Prodtitle.Size = new System.Drawing.Size(103, 13);
             this.Prodtitle.TabIndex = 7;
             this.Prodtitle.Text = "Selecione o Produto";
-            this.Prodtitle.Click += new System.EventHandler(this.label1_Click);
             // 
             // Confirmar
             // 
@@ -185,7 +185,6 @@
             this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 14;
             this.label3.Text = "Saidas";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // label4
             // 
@@ -224,8 +223,12 @@
             this.Controls.Add(this.EntradaList);
             this.Controls.Add(this.SaidaList);
             this.Controls.Add(this.ProdList);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Main";
-            this.Text = "Form1";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Estoque";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
