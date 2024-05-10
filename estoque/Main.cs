@@ -1,6 +1,7 @@
 ﻿using estoque.models;
 using estoque.repository;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,23 +25,29 @@ namespace estoque
             {
                 ProdList.Items.Add($"{produto.id} - {produto.name}");
             }
+            
         }
         public void AtualizarEntradaSaida(int id)
         {
-            List<Movimentacao> movs = repo.ListarMovimentacoes(id);
-            EntradaList.Items.Clear();
-            SaidaList.Items.Clear();
-            foreach (Movimentacao mov in movs)
-            {
-                if (mov.tipo == "Entrada")
-                {
-                    EntradaList.Items.Add($"{mov.quant} --{mov.data.ToString("dd/MM/yyyy")}");
-                }
-                else if (mov.tipo == "Saída")
-                {
-                    SaidaList.Items.Add($"{mov.quant} -- {mov.data}");
-                }
-            }
+            var data = from mov in repo.ListarMovimentacoes(id)
+                       orderby mov.id
+                       select new
+                       {
+                           Id = mov.id,
+                           Tipo = mov.tipo,
+                           Quant = mov.quant,
+                           Data = mov.data,
+                           Desc = mov.desc
+                       };
+
+
+            MovimentacaoTable.DataSource = data.ToList();
+            MovimentacaoTable.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+        }
+        public void AtualizarEstoque(int id)
+        {
+            int estoque = repo.EmEstoque(id);
+            Estoque.Text = $"ESTOQUE: {estoque}";
         }
         public Main()
         {
@@ -49,17 +56,20 @@ namespace estoque
             repo.AddProduto("maçã");
             repo.AddProduto("Lata");
 
-            repo.AddMovimentacao(1, "Entrada", 100);
-            repo.AddMovimentacao(2, "Entrada", 100);
-            repo.AddMovimentacao(3, "Entrada", 100);
+            repo.AddMovimentacao(1, "Entrada", 100, "entrada teste");
+            repo.AddMovimentacao(2, "Entrada", 100, "entrada teste");
+            repo.AddMovimentacao(3, "Entrada", 100, "entrada teste");
 
-            repo.AddMovimentacao(1, "Saída", 10);
-            repo.AddMovimentacao(3, "Saída", 10);
-            repo.AddMovimentacao(2, "Saída", 10);
+            repo.AddMovimentacao(1, "Saída", 10, "saida teste");
+            repo.AddMovimentacao(3, "Saída", 10, "saida teste");
+            repo.AddMovimentacao(2, "Saída", 10, "saida teste");
 
             InitializeComponent();
 
+
             AtualizarProds();
+
+            
         }
 
         private void ProdList_SelectedIndexChanged(object sender, EventArgs e)
@@ -67,9 +77,7 @@ namespace estoque
             Prodtitle.Text = ProdList.SelectedItem.ToString();
             int id = Convert.ToInt32(Prodtitle.Text.Split('-')[0]);
 
-            int estoque = repo.EmEstoque(id);
-            Estoque.Text = $"ESTOQUE: {estoque}";
-
+            AtualizarEstoque(id);
             AtualizarEntradaSaida(id);
         }
 
@@ -108,9 +116,11 @@ namespace estoque
                 int id = Convert.ToInt32(Prodtitle.Text.Split('-')[0]);
                 string tipo = CheckBox.Text;
                 int quant = Convert.ToInt32(QuantInput.Text);
+                string desc = Desc.Text;
 
-                repo.AddMovimentacao(id, tipo, quant);
+                repo.AddMovimentacao(id, tipo, quant, desc);
                 AtualizarEntradaSaida(id);
+                AtualizarEstoque(id);
             }
         }
 

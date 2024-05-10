@@ -19,9 +19,10 @@ namespace estoque.repository
             produtos.Add(new Produto(id, name));
         }
 
-        public void AddMovimentacao(int prodId, string tipo, int quant)
+        public void AddMovimentacao(int prodId, string tipo, int quant, string desc)
         {
-            movimentacaos.Add(new Movimentacao(prodId, tipo, quant));
+            int id = ListarMovimentacoes(prodId).Count() + 1;
+            movimentacaos.Add(new Movimentacao(id, prodId, tipo, quant, desc));
         }
 
         public List<Produto> ListarProdutos()

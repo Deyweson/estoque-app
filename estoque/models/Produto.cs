@@ -8,8 +8,8 @@ namespace estoque.models
 {
     public class Produto
     {
-        public int id;
-        public string name;
+        public int id {get; set; }
+        public string name { get; set; }
 
         public Produto(int id, string name)
         {

@@ -99,6 +99,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="estoque_TemporaryKey.pfx" />
+    <None Include="README.md" />
+    <None Include="Properties\DataSources\estoque.repository.Repo.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
